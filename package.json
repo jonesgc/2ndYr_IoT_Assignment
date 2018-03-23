@@ -1,0 +1,20 @@
+{
+  "name": "challenge3",
+  "version": "1.0.0",
+  "description": "IOT Challenge3 bluetooth server.",
+  "main": "app.js",
+  "dependencies": {
+    "async": "^2.6.0",
+    "bluetooth-hci-socket": "git+https://github.com/noble/node-bluetooth-hci-socket.git",
+    "express": "^4.16.3",
+    "noble": "git+https://github.com/noble/noble.git",
+    "node-gyp": "^3.6.2",
+    "npm": "^5.7.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gregory Jones",
+  "license": "ISC"
+}
