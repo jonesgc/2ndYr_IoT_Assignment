@@ -45,22 +45,34 @@ noble.on('stateChange', function (state)
             console.log("Found a microbit!");
             peripheral.connect(function (error) {
                 console.log("Connected to microbit!");
-
+                //List of services taken from BLE spec.
+                    //Acclerometer service UUIDs.
+                    var accl = "e95d0753251d470aa062fa1922dfa9a8";
+                    //Accelerometer data.
+                    var acclData = "e95dca4b251d470aa062fa1922dfa9a8";
+                    //Accelerometer period is how often it is queried for data.
+                    var acclPer = "e95dfb24251d470aa062fa1922dfa9a8";
+                    //Magnetometer service.
+                    var magne = "E95DF2D8251D470AA062FA1922DFA9A8";
+                    //Magnetometer data.
+                    var magneData = "";
                 //Get services, UUIDs for microbit services taken from lancaster uni BLE spec.
                 peripheral.discoverServices([], function (error, services) {
                     console.log("Trying to get services");
-                    var accl = "E95D0753251D470AA062FA1922DFA9A8";
-                    //console.log(services);
-                    for (var i = 0, len = services.length; i < len; i++)
+                    
+                    console.log(services);
+                    for(var i=0, len = services.length; i < len; i++)
                     {
-                        //Service UUIDs are lowercase, but UUIDs in specification are uppercase. 
-                        var serviceUUID = services[i].uuid;
-                        var temp = serviceUUID.toUpperCase();
                         console.log(services[i].uuid);
-                        //Find the services we want.
-                        if(temp == accl)
+                        if(services[i].uuid == accl)
                         {
-                            console.log("Found the acclerometer.");
+                            console.log("Found accl");
+                            var acclServ = services[i];
+                            acclServ.discoverCharacteristics([], function (error, chars) {
+                                chars.forEach(function (chars) {
+                                    console.log('Char uuid:',chars.uuid);
+                                })
+                            });
                         }
                     }
                 });
