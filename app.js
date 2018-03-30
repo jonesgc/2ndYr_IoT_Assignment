@@ -12,12 +12,19 @@ const microAccl = require('./BLEaccl.js');
 app.get('/', (req, res) => {
     res.sendFile('D:\\programs\\uni\\IOT\\Challenge3\\index.html');
 });
+
 const test = microAccl.getAccl();
-const xyz = microAccl.xyz;
-console.log(xyz);
-//Serve the static public folder so it can be used.
-app.use(express.static('public'));
-//Start Server.
-app.listen(3000, () => console.log('Sever running on port 3000'));
+const time = setInterval(function () {
+   
+    const xyz = microAccl.xyz;
+    console.log(xyz);
+}, 2000)
+    
+
+
+    //Serve the static public folder so it can be used.
+    app.use(express.static('public'));
+    //Start Server.
+    app.listen(3000, () => console.log('Sever running on port 3000'));
 
 

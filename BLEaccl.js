@@ -79,31 +79,35 @@ noble.on('stateChange', function (state)
                                     //console.log('Char uuid:', chars.uuid);
                                     if (chars.uuid == acclData)
                                     {
-                                        var acclDataChar = chars;
-                                        console.log("Got the data char");
-                                        acclDataChar.read(function (error, data) {
-                                            //console.log("Raw data:", data);
-                                            //Raw data from accelerometer.
-                                            var rawData = Array.prototype.slice.call(data, 0);
-                                            var rawX = new Int16Array();
-                                            rawX = rawData.slice(0, 1);
-                                            var rawY = new Int16Array();
-                                            rawY = rawData.slice(2, 3);
-                                            var rawZ = new Int16Array();
-                                            rawZ = rawData.slice(4, 5);
-                                            //console.log("Raw X val",rawX);
-                                            //console.log("Raw y val",rawY);
-                                            //console.log("Raw Z val", rawZ);
-                                            var datX = rawX / 1000;
-                                            var datY = rawY / 1000;
-                                            var datZ = rawZ / 1000;
-                                            console.log("X axis:", datX);
-                                            console.log("Y axis:", datY);
-                                            console.log("Z axis:", datZ);
-                                            xyz[0] = datX;
-                                            xyz[1] = datY;
-                                            xyz[2] = datZ;
-                                        })
+                                        var timer = setInterval(function () {
+                                            var acclDataChar = chars;
+                                            console.log("Got the data char");
+                                            acclDataChar.read(function (error, data) {
+                                                //console.log("Raw data:", data);
+                                                //Raw data from accelerometer.
+                                                var rawData = Array.prototype.slice.call(data, 0);
+                                                var rawX = new Int16Array();
+                                                rawX = rawData.slice(0, 1);
+                                                var rawY = new Int16Array();
+                                                rawY = rawData.slice(2, 3);
+                                                var rawZ = new Int16Array();
+                                                rawZ = rawData.slice(4, 5);
+                                                //console.log("Raw X val",rawX);
+                                                //console.log("Raw y val",rawY);
+                                                //console.log("Raw Z val", rawZ);
+                                                var datX = rawX / 1000;
+                                                var datY = rawY / 1000;
+                                                var datZ = rawZ / 1000;
+                                                console.log("X axis:", datX);
+                                                console.log("Y axis:", datY);
+                                                console.log("Z axis:", datZ);
+                                                xyz[0] = datX;
+                                                xyz[1] = datY;
+                                                xyz[2] = datZ;
+                                            })
+                                        }
+                                            ,1000);
+                                        
                                     }
                                    
                                 })
@@ -116,6 +120,7 @@ noble.on('stateChange', function (state)
         console.log();
     });
 }
-
+//debug
+//getAccl();
 module.exports.getAccl = getAccl;
 module.exports.xyz = xyz;
