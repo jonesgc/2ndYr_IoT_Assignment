@@ -12,7 +12,6 @@ int main()
 {
   uBit.init();
   new MicroBitAccelerometerService(*uBit.ble, uBit.accelerometer);
-  //new MicroBitMagnetometerService(*uBit.ble, uBit.compass);
 
   //Listen for connection.
   uBit.messageBus.listen(MICROBIT_ID_BLE, MICROBIT_BLE_EVT_CONNECTED, conn);
@@ -27,7 +26,9 @@ int main()
   bool msg = false;
   while(msg == false)
   {
-
+    //Flash the current character in the alphabet.
+    uBit.display.print('A');
+    uBit.sleep(1000);
   }
   release_fiber();
 }

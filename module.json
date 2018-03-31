@@ -1,0 +1,11 @@
+{
+  "name": "challenge3",
+  "version": "1.0.0",
+  "description": "Challenge 3",
+  "license": "MIT",
+  "dependencies": {
+    "microbit": "lancaster-university/microbit"
+  },
+  "targetDependencies": {},
+  "bin": "./source"
+}
