@@ -1,0 +1,11 @@
+{
+  "name": "uart",
+  "version": "1.0.0",
+  "description": "uart msg passing for Challenge 3",
+  "license": "MIT",
+  "dependencies": {
+    "microbit": "lancaster-university/microbit"
+  },
+  "targetDependencies": {},
+  "bin": "./source"
+}
