@@ -6,9 +6,9 @@ var util = require('utility');
 
 console.log("Searching for microbit.");
 var regex = new RegExp('/^microbit\(([a-z]*)\)/');
-
-var xyz = [];
+var msg = "";
 function getUart() {
+
     //State of local bluetooth device changed.
     noble.on('stateChange', function (state) {
         if (state === 'poweredOn') {
@@ -62,22 +62,52 @@ function getUart() {
                             var uartServ = services[i];
                             //Get characteristics for this service.
                             uartServ.discoverCharacteristics([], function (error, chars) {
-
+                               
                                 chars.forEach(function (chars) {
                                     //console.log('Char uuid:', chars.uuid);
                                     if (chars.uuid == uartTXUUID) {
                                         
                                         var uartTXChar = chars;
                                         console.log("Got the tx char");
-                                        uartTXChar.notify(true, function (error) { console.log("notficaitions on"); });
-                                        uartTXChar.on('data', function (data, isNotification) { console.log(data); });
+                                        //Enable notifcations / indications.
+                                        uartTXChar.notify(true, function (error) {
+                                            console.log("notficaitions on");
+                                        });
+                                        //Total number of packets to expect.
+                                        var eom = 0;
+                                        var packets = 0;
+                                        var count = 0;
+                                        //Event listener for indications from serivce.
+                                        uartTXChar.on('data', function (data, isNotification) {
+                                            var dataChar = data.toString('ascii');
+                                            if (packets == 0) {
+                                                packets = data.toString('ascii');
+                                                //Dont count the null terminator.
+                                                packets--;
+                                                console.log("No packets.", packets);
+                                                count++;
+                                            }
+                                            else if(dataChar == 0)
+                                            {
+                                            }
+                                            //console.log(data.toString('ascii'));
+                                            else if (dataChar == '|') {
+                                                console.log("EOM.");
+                                                eom = 1;
+                                            }
+                                            //Append character to msg.
+                                            else if(count > 0){
+                                                msg = msg + dataChar;
+                                                console.log(msg);
+                                                count++;
+                                            };
+                                        });
                                         //console.log(uartTXChar);
                                         //TX characteristic requires subscription, data is returned in byte arrays.
                                         uartTXChar.subscribe(function (error) {
                                             console.log("Subscribed");
                                         });
-                                       
-                                        //uartTXChar.read(function (error, data) { console.log("reading" , data); });
+                                        
                                     }
 
                                 })
@@ -91,6 +121,10 @@ function getUart() {
     });
 }
 //debug
-getUart();
-//module.exports.getAccl = getAccl;
-//module.exports.xyz = xyz;
+//getUart();
+//Check for message.
+//var time = setInterval(function () { console.log(msg); }, 1000);
+//console.log(test);
+module.exports.getUart = getUart;
+//var time = setInterval(function () { module.exports.msg = msg; }, 1000);
+

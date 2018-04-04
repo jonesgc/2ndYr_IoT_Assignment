@@ -7,17 +7,21 @@ const app = express();
 const noble = require('noble');
 
 const microAccl = require('./BLEaccl.js');
+const microUART = require('./BLEuart.js');
 
 //Respond too app index page data.
 app.get('/', (req, res) => {
     res.sendFile('D:\\programs\\uni\\IOT\\Challenge3\\index.html');
 });
 
-const test = microAccl.getAccl();
+const accl = microAccl.getAccl();
+const uart = microUART.getUart();
 const time = setInterval(function () {
    
     const xyz = microAccl.xyz;
+    const msg = microUART.msg; 
     console.log(xyz);
+    console.log(msg);
 }, 2000)
     
 
