@@ -26,79 +26,135 @@ int main()
   ManagedString msgString = 0;
   //65 default value for display character, this is the ascii value for A.
   char inChar = 65;
-
-  //Message loop, broken when eom '|' (124) is entered.
+  char eom = '|';
   bool msg = false;
   bool lock = false;
-
-  while(msg == false)
+  bool input = false;
+  while(1)
   {
-    //Get user input, the displayed character is added to the message string,
-    //by pressing both buttons at once.
-    //Boolean lock is used to prevent inconsistant behaviour with input.
-    while(buttonA.isPressed() && buttonB.isPressed())
+    if(!msg)
     {
-      if(!lock)
+      while(msg == false)
       {
-        uBit.display.print("+");
-        msgString = msgString + inChar;
-        uBit.sleep(500);
-        lock = true;
+        while(buttonA.isPressed())
+        {
+          //End message;
+          while(buttonB.isPressed())
+          {
+            uBit.display.print("|");
+            msg = true;
+            lock = true;
+            uBit.sleep(500);
+            if(inChar == 65)
+            {
+              inChar = 90;
+              lock = true;
+            }
+            else
+            {
+              inChar--;
+              lock = true;
+            }
+          }
+          //Increment once per click, by use of the lock.
+          if(lock == false)
+          {
+
+            //Wrap the value around character set we want [A-Z].
+            if(inChar == 90)
+            {
+              inChar = 65;
+              lock = true;
+            }
+            else
+            {
+              inChar++;
+              lock = true;
+            }
+          }
+        }
+        //Release the lock allowing scrolling again.
+        lock = false;
+        while(buttonB.isPressed())
+        {
+
+          //Increment once per click, by use of the lock.
+          if(lock == false)
+          {
+            //Wrap the value around character set we want [A-Z].
+            if(inChar == 65)
+            {
+              inChar = 90;
+              lock = true;
+            }
+            else
+            {
+              inChar--;
+              lock = true;
+            }
+
+          }
+          //Add current character on display to msg string.
+          while(buttonA.isPressed())
+          {
+            uBit.display.print("+");
+            lock = true;
+            input = true;
+            uBit.sleep(500);
+            if(inChar == 90)
+            {
+              inChar = 65;
+              lock = true;
+            }
+            else
+            {
+              inChar++;
+              lock = true;
+            }
+          }
+        }
+        //Release the lock allowing scrolling again.
+        lock = false;
+
+        //Check if the add character command was entered B then A.
+        if(input)
+        {
+          msgString = msgString + inChar;
+          input = false;
+        }
+
+        //Display ascii character on display, btn a to go forward, btn b to go back.
+        //Wrap around the ends, a limted character set is used.
+        uBit.display.print(inChar);
       }
     }
-    lock = false;
-    while(buttonA.isPressed())
+    //Msg complete, send message over uart.
+    else if(msg)
     {
-      //End message;
-      while(buttonB.isPressed())
+      int i = 0;
+      //Append EOM character to string
+      msgString = msgString + '|';
+      int size = msgString.length();
+      uart->send(size);
+      //Max number of bytes that can be sent per packet is 20.
+      for(i = 0; i < msgString.length(); i++)
       {
-        uBit.display.print("|");
-        uart->send("1ES");
-        lock = true;
-      }
-      //Increment once per click, by use of the lock.
-      if(!lock)
-      {
-
-        //Wrap the value around character set we want [A-Z].
-        if(inChar == 90)
+        //Send eom.
+        if(msgString.charAt(i) == eom)
         {
-          inChar = 65;
-          lock = true;
+          uart->send('|');
+          break;
         }
         else
         {
-          inChar++;
-          lock = true;
+          uart->send(msgString.charAt(i));
         }
       }
+      //Iterate through each member of msgString putting them into packets.
+      msg = false;
     }
-    //Release the lock allowing scrolling again.
-    lock = false;
-    while(buttonB.isPressed())
-    {
-      //Increment once per click, by use of the lock.
-      if(!lock)
-      {
-        //Wrap the value around character set we want [A-Z].
-        if(inChar == 65)
-        {
-          inChar = 90;
-          lock = true;
-        }
-        else
-        {
-          inChar--;
-          lock = true;
-        }
-
-      }
-    }
-    lock = false;
-    //Display ascii character on display, btn a to go forward, btn b to go back.
-    //Wrap around the ends, a limted character set is used.
-    uBit.display.print(inChar);
   }
+
 
   release_fiber();
 }
