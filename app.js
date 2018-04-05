@@ -14,16 +14,26 @@ app.get('/', (req, res) => {
     res.sendFile('D:\\programs\\uni\\IOT\\Challenge3\\index.html');
 });
 
-const accl = microAccl.getAccl();
+//const accl = microAccl.getAccl();
 const uart = microUART.getUart();
+
 const time = setInterval(function () {
-   
-    const xyz = microAccl.xyz;
-    const msg = microUART.msg; 
-    console.log(xyz);
-    console.log(msg);
-}, 2000)
-    
+    var count = 0;
+    //const xyz = microAccl.xyz;
+    const msg = microUART.msg;
+    const eom = microUART.eom;
+    //console.log(xyz);
+    console.log("Message reads:", msg);
+    if (msg === undefined)
+    { //do nothing
+    };
+    if(eom == 1)
+    {
+        console.log("Stopping loop");
+        clearInterval(time);
+    }
+}, 2000);
+
 
 
     //Serve the static public folder so it can be used.

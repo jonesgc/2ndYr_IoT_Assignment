@@ -60,6 +60,7 @@ function getUart() {
                         if (services[i].uuid == uartUUID) {
                             console.log("Found uart");
                             var uartServ = services[i];
+                            var rawMsg = "";
                             //Get characteristics for this service.
                             uartServ.discoverCharacteristics([], function (error, chars) {
                                
@@ -77,6 +78,7 @@ function getUart() {
                                         var eom = 0;
                                         var packets = 0;
                                         var count = 0;
+                                        
                                         //Event listener for indications from serivce.
                                         uartTXChar.on('data', function (data, isNotification) {
                                             var dataChar = data.toString('ascii');
@@ -84,7 +86,7 @@ function getUart() {
                                                 packets = data.toString('ascii');
                                                 //Dont count the null terminator.
                                                 packets--;
-                                                console.log("No packets.", packets);
+                                                console.log("Number of  packets.", packets);
                                                 count++;
                                             }
                                             else if(dataChar == 0)
@@ -94,11 +96,12 @@ function getUart() {
                                             else if (dataChar == '|') {
                                                 console.log("EOM.");
                                                 eom = 1;
+                                                module.exports.eom = eom;
                                             }
                                             //Append character to msg.
                                             else if(count > 0){
-                                                msg = msg + dataChar;
-                                                console.log(msg);
+                                                rawMsg = rawMsg + dataChar;
+                                                //console.log(msg);
                                                 count++;
                                             };
                                         });
@@ -107,7 +110,16 @@ function getUart() {
                                         uartTXChar.subscribe(function (error) {
                                             console.log("Subscribed");
                                         });
-                                        
+                                        var time = setInterval(function () {
+                                            //Update the value of msg.
+                                            msg = rawMsg;
+                                            module.exports.msg = msg;
+                                            if(eom == 1)
+                                            {
+                                                //clearInterval(time);
+                                            }
+                                            //console.log("raw is", rawMsg, "msg is", msg);
+                                        }, 1000);
                                     }
 
                                 })
@@ -120,11 +132,14 @@ function getUart() {
         console.log();
     });
 }
+
 //debug
 //getUart();
 //Check for message.
-//var time = setInterval(function () { console.log(msg); }, 1000);
+//var time = setInterval(function () { console.log("trying to get msg", msg); }, 1000);
 //console.log(test);
 module.exports.getUart = getUart;
+
+//module.exports.uartDisconn = disConn;
 //var time = setInterval(function () { module.exports.msg = msg; }, 1000);
 
