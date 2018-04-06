@@ -81,6 +81,7 @@ function getUart() {
                                         
                                         //Event listener for indications from serivce.
                                         uartTXChar.on('data', function (data, isNotification) {
+
                                             var dataChar = data.toString('ascii');
                                             if (packets == 0) {
                                                 packets = data.toString('ascii');
@@ -96,6 +97,7 @@ function getUart() {
                                             else if (dataChar == '|') {
                                                 console.log("EOM.");
                                                 eom = 1;
+                                                packets = 0;
                                                 module.exports.eom = eom;
                                             }
                                             //Append character to msg.
@@ -113,10 +115,16 @@ function getUart() {
                                         var time = setInterval(function () {
                                             //Update the value of msg.
                                             msg = rawMsg;
+
                                             module.exports.msg = msg;
+                                            
+
                                             if(eom == 1)
                                             {
+                                                msg = "";
+                                                rawMsg = "";
                                                 //clearInterval(time);
+                                                eom = 0;
                                             }
                                             //console.log("raw is", rawMsg, "msg is", msg);
                                         }, 1000);

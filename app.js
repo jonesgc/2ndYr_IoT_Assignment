@@ -30,7 +30,8 @@ const time = setInterval(function () {
     if(eom == 1)
     {
         console.log("Stopping loop");
-        clearInterval(time);
+        const msg = microUART.msg;
+        //clearInterval(time);
     }
 }, 2000);
 
