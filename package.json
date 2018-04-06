@@ -6,6 +6,7 @@
   "dependencies": {
     "async": "^2.6.0",
     "bluetooth-hci-socket": "git+https://github.com/noble/node-bluetooth-hci-socket.git",
+    "ejs": "^2.5.8",
     "express": "^4.16.3",
     "noble": "git+https://github.com/noble/noble.git",
     "node-gyp": "^3.6.2",

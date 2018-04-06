@@ -83,6 +83,19 @@ function getUart() {
                                         uartTXChar.on('data', function (data, isNotification) {
 
                                             var dataChar = data.toString('ascii');
+                                            //Decrypt.
+                                            function decrypt(char) {
+                                                if (char == '|') {
+                                                    //Dont "decrypt" eom.
+                                                    return '|';
+                                                }
+                                                else {
+                                                    return String.fromCharCode(char.charCodeAt(0) - 2);
+                                                };
+                                                
+                                            };
+                                            
+                                            dataChar = decrypt(dataChar);
                                             if (packets == 0) {
                                                 packets = data.toString('ascii');
                                                 //Dont count the null terminator.
@@ -97,8 +110,9 @@ function getUart() {
                                             else if (dataChar == '|') {
                                                 console.log("EOM.");
                                                 eom = 1;
+                                                module.exports.packets = packets;
                                                 packets = 0;
-                                                module.exports.eom = eom;
+                                                en = "";
                                             }
                                             //Append character to msg.
                                             else if(count > 0){
@@ -114,18 +128,19 @@ function getUart() {
                                         });
                                         var time = setInterval(function () {
                                             //Update the value of msg.
-                                            msg = rawMsg;
-
-                                            module.exports.msg = msg;
                                             
 
-                                            if(eom == 1)
-                                            {
+                                            if (eom == 1) {
+                                                msg = rawMsg;
+
+                                                module.exports.msg = msg;
+                                                module.exports.eom = eom;
+                                                console.log("Clearing buffers");
                                                 msg = "";
                                                 rawMsg = "";
                                                 //clearInterval(time);
                                                 eom = 0;
-                                            }
+                                            };
                                             //console.log("raw is", rawMsg, "msg is", msg);
                                         }, 1000);
                                     }
