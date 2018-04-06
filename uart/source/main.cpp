@@ -146,7 +146,7 @@ int main()
       for(i = 0; i < msgString.length(); i++)
       {
         //Send eom.
-        if(msgString.charAt(i) == eom)
+        if(encrypted.charAt(i) == eom)
         {
           uart->send('|');
           //Clear out old string.
