@@ -12,6 +12,11 @@ public:
 	//Destructor
 	~msg();
 
+	//Encrypt Ascii string
+	ManagedString encrypt(ManagedString);
+
+	//Decrypt Ascii string
+	ManagedString decrypt(ManagedString);
 private:
 
 };

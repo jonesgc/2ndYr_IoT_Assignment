@@ -1,6 +1,7 @@
 #include "MicroBit.h"
 #include "MicroBitUARTService.h"
-
+#include "../common/protocol.h"
+#include "../common/protocol.cpp"
 MicroBit uBit;
 MicroBitUARTService *uart;
 
@@ -16,6 +17,7 @@ MicroBitButton buttonB(MICROBIT_PIN_BUTTON_B, MICROBIT_ID_BUTTON_B);
 int main()
 {
   uBit.init();
+  protocol protocol;
   uart = new MicroBitUARTService(*uBit.ble, 32, 32);
   //Listen for connection.
   uBit.messageBus.listen(MICROBIT_ID_BLE, MICROBIT_BLE_EVT_CONNECTED, conn);
@@ -133,9 +135,13 @@ int main()
     {
       int i = 0;
       //Append EOM character to string
-      msgString = msgString + '|';
+      ManagedString encrypted = protocol.encrypt(msgString);
+      //msgString = msgString + '|';
+      encrypted = encrypted + '|';
       int size = msgString.length();
       uart->send(size);
+      //Encrypt the msg.
+
       //Max number of bytes that can be sent per packet is 20.
       for(i = 0; i < msgString.length(); i++)
       {
@@ -143,11 +149,14 @@ int main()
         if(msgString.charAt(i) == eom)
         {
           uart->send('|');
+          //Clear out old string.
+          msgString = "";
+          encrypted = "";
           break;
         }
         else
         {
-          uart->send(msgString.charAt(i));
+          uart->send(encrypted.charAt(i));
         }
       }
       //Iterate through each member of msgString putting them into packets.
