@@ -5,8 +5,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         var socket = io();
+        //Getting Msg from server.
         socket.on('uartMSg', function (msg) {
             $('#recBox').append(msg);
+        });
+        //Getting Accl data from server.
+        socket.on('acclData', function (xyz) {
+            $('#acclDat').html('');
+            $('#acclDat').append(xyz);
+            //console.log(xyz);
         });
         function getMsg(){
             console.log("Getting Msg");
@@ -16,6 +23,12 @@
         function stopUart() {
             socket.emit('stopUart');
         };
+        function getAccl() {
+            socket.emit('getAccl');
+        };
+        function stopAccl() {
+            socket.emit('stopAccl');
+        };
     </script>
 
 </head>
@@ -23,12 +36,19 @@
     <h1>IOT Challenge 3</h1>
     <div>
         <input id="getMsgBtn" type="button" value="Get messages" onclick="getMsg()"/> 
+        <input id="stopMsgBtn" type="button" value="Stop messages" onclick="stopUart()" /> 
         <div id="recBox">
             messages from Microbit go here.
         </div>
         <div id="sendMsg">
             <input id="sendMsgText" type="text" />
             <input id="sendMsgBtn" type="button" value="send Message" />
+        </div>
+        <div id="accl">
+            <input id="getAcclBtn" type="button" value="get Accl" onclick="getAccl()" />
+            <div id="acclDat">
+
+            </div>
         </div>
     </div>
     <canvas id="display" width="1000" height="750">

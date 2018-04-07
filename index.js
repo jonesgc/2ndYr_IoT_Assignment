@@ -6,15 +6,14 @@ var io = require('socket.io')(http);
 //BLE moules.
 var microAccl = require('./BLEaccl.js');
 var microUART = require('./BLEuart.js');
-
-function getUart(stop) {
-    //const accl = microAccl.getAccl();
+var stop = 0;
+function getUart() {
+    
     var uart = microUART.getUart();
     var prev ="";
     //Constantly check for new messages.
     var time = setInterval(function () {
-        
-        //const xyz = microAccl.xyz;
+   
         var msg = microUART.msg;
         var lock = 0;
         
@@ -35,14 +34,33 @@ function getUart(stop) {
         
         
         //Check argument for if the loop should stop.
-            if (stop == 1) {
+        if (stop == 1) {
+            console.log("Stopping");
                 clearInterval(time);
             };
             
         
     }, 2000);
 };
-    //getUart();
+    
+function getAccl() {
+    var accl = microAccl.getAccl();
+    console.log("Getting Accl data");
+    var time = setInterval(function () {
+        
+        var xyz = microAccl.xyz;
+        //console.log(xyz);
+        io.emit('acclData', xyz);
+        
+        //Check argument for if the loop should stop.
+        if (stop == 1) {
+            console.log("Stopping");
+            clearInterval(time);
+        };
+    },2000);
+};
+
+
 app.get('/', function (req, res) {
     res.sendFile('D:\\programs\\uni\\IOT\\Challenge3\\index.html');
 });
@@ -51,11 +69,20 @@ io.on('connection', function (socket) {
     console.log('Web Client Connected');
     socket.on('getUart', function () {
         console.log("Request for UART");
-        getUart(0);
+        getUart(1);
+        stop = 0;
     });
     socket.on('stopUart', function () {
         console.log("stopping  UART");
-        getUart(1);
+        stop = 1;
+    });
+    socket.on('getAccl', function () {
+        console.log("Request for Accl");
+        getAccl();
+    });
+    socket.on('stopAccl', function () {
+        console.log("Stopping Accl");
+        getAccl(1);
     });
 });
 

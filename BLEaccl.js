@@ -43,7 +43,7 @@ noble.on('stateChange', function (state)
         }
 
         //Find and attempt to connect to the bbc microbit.
-        if (peripheral.advertisement.localName == "BBC micro:bit [gipev]")
+        if (peripheral.advertisement.localName == "BBC micro:bit [pitig]")
         {
             console.log("Found a microbit!");
             peripheral.connect(function (error) {
@@ -55,10 +55,6 @@ noble.on('stateChange', function (state)
                 var acclData = "e95dca4b251d470aa062fa1922dfa9a8";
                 //Accelerometer period is how often it is queried for data.
                 var acclPer = "e95dfb24251d470aa062fa1922dfa9a8";
-                //Magnetometer service.
-                var magne = "E95DF2D8251D470AA062FA1922DFA9A8";
-                //Magnetometer data.
-                var magneData = "";
                 //Get services, UUIDs for microbit services taken from lancaster uni BLE spec.
                 peripheral.discoverServices([], function (error, services) {
                     console.log("Trying to get services");
@@ -79,9 +75,10 @@ noble.on('stateChange', function (state)
                                     //console.log('Char uuid:', chars.uuid);
                                     if (chars.uuid == acclData)
                                     {
+                                        var acclDataChar = chars;
                                         var timer = setInterval(function () {
-                                            var acclDataChar = chars;
-                                            console.log("Got the data char");
+                                            
+                                            //console.log("Got the data char");
                                             acclDataChar.read(function (error, data) {
                                                 //console.log("Raw data:", data);
                                                 //Raw data from accelerometer.
@@ -98,12 +95,13 @@ noble.on('stateChange', function (state)
                                                 var datX = rawX / 1000;
                                                 var datY = rawY / 1000;
                                                 var datZ = rawZ / 1000;
-                                                console.log("X axis:", datX);
-                                                console.log("Y axis:", datY);
-                                                console.log("Z axis:", datZ);
+                                               // console.log("X axis:", datX);
+                                                //console.log("Y axis:", datY);
+                                                //console.log("Z axis:", datZ);
                                                 xyz[0] = datX;
                                                 xyz[1] = datY;
                                                 xyz[2] = datZ;
+                                                module.exports.xyz = xyz;
                                             })
                                         }
                                             ,1000);
@@ -123,4 +121,3 @@ noble.on('stateChange', function (state)
 //debug
 //getAccl();
 module.exports.getAccl = getAccl;
-module.exports.xyz = xyz;
