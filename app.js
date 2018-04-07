@@ -1,6 +1,9 @@
 //Using express for routing.
 const express = require('express');
 const app = express();
+const http = require('http');
+const io = require('io');
+
 
 app.set('view engine', 'ejs');
 
@@ -41,17 +44,15 @@ function getData() {
    
     
 
-    //Respond too app index page data.
-    app.get('/', (req, res) => {
-        
-        //res.sendFile('D:\\programs\\uni\\IOT\\Challenge3\\index.html');
-        res.render('index');
-        //var acclVal = xyz;    
-        
-
-    });
+    
 };
+//Respond too app index page data.
+app.get('/', (req, res) => {
 
+    res.sendFile('D:\\programs\\uni\\IOT\\Challenge3\\index.html');
+    
+
+});
 
 
 getData();

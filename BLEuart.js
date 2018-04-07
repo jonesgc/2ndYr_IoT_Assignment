@@ -134,12 +134,13 @@ function getUart() {
                                                 msg = rawMsg;
 
                                                 module.exports.msg = msg;
+                                                eom = 0;
                                                 module.exports.eom = eom;
                                                 console.log("Clearing buffers");
                                                 msg = "";
                                                 rawMsg = "";
                                                 //clearInterval(time);
-                                                eom = 0;
+                                                
                                             };
                                             //console.log("raw is", rawMsg, "msg is", msg);
                                         }, 1000);
