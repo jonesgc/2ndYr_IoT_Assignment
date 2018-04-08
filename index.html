@@ -23,6 +23,12 @@
         function stopUart() {
             socket.emit('stopUart');
         };
+        //Get contents of input field then send to microbit via server.
+        function sendMsg() {
+            var msgToSend = $('#sendMsgText').val();
+            console.log("Trying to send", msgToSend);
+            socket.emit('sendMsg', msgToSend);
+        };
         function getAccl() {
             socket.emit('getAccl');
         };
@@ -42,7 +48,7 @@
         </div>
         <div id="sendMsg">
             <input id="sendMsgText" type="text" />
-            <input id="sendMsgBtn" type="button" value="send Message" />
+            <input id="sendMsgBtn" type="button" value="send Message" onclick="sendMsg()" />
         </div>
         <div id="accl">
             <input id="getAcclBtn" type="button" value="get Accl" onclick="getAccl()" />

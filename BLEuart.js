@@ -222,9 +222,31 @@ function sendMsg() {
                                     //console.log('Char uuid:', chars.uuid);
                                     if (chars.uuid == uartRXUUID) {
                                         console.log("got the rx char");
-                                        uartRXUUID.write(data, true, function (error) {
-                                            console.log("Trying to write", msgToSend);
-                                        });
+                                        var rxChar = chars;
+                                        var msgToSend = main.msgToSend;
+                                        //Append eom char.
+                                        msgToSend += '|';
+                                        //Loop through the msgToSend, breaking it into characters
+                                        //this is because of the limit (20 bytes) on uart sending.
+                                        console.log("Trying to write", msgToSend);
+                                        for (var i = 0; i < msgToSend.length; i++) {
+                                            console.log("Sending: ", msgToSend.charAt(i));
+                                            //Encrypt the character before sending.
+                                            if (msgToSend.charAt(i) == '|') {
+                                                //Dont encrypt eom.
+                                            }
+                                            else {
+                                                var curChar = (msgToSend.charAt(i) + 2);
+                                            };
+                                            
+                                            var bufToSend = Buffer.from(msgToSend.charAt(i), 'ascii');
+                                            console.log("Trying to send: ", bufToSend);
+                                            //Write to rx char without resposnse.
+                                            rxChar.write(bufToSend, true);
+                                        };
+                                        
+                                        
+
                                     }
 
                                 })
@@ -243,7 +265,7 @@ function sendMsg() {
 //var time = setInterval(function () { console.log("trying to get msg", msg); }, 1000);
 //console.log(test);
 module.exports.getUart = getUart;
-
+module.exports.sendMsg = sendMsg;
 //module.exports.uartDisconn = disConn;
 //var time = setInterval(function () { module.exports.msg = msg; }, 1000);
 

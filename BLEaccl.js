@@ -47,6 +47,7 @@ noble.on('stateChange', function (state)
         {
             console.log("Found a microbit!");
             peripheral.connect(function (error) {
+                
                 console.log("Connected to microbit!");
                 //List of services taken from BLE spec.
                 //Acclerometer service UUIDs.

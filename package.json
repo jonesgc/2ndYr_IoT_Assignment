@@ -4,7 +4,7 @@
   "description": "IOT Challenge3 bluetooth server.",
   "main": "app.js",
   "dependencies": {
-    "async": "^2.6.0",
+    "async": "^0.2.9",
     "bluetooth-hci-socket": "git+https://github.com/noble/node-bluetooth-hci-socket.git",
     "ejs": "^2.5.8",
     "express": "^4.16.3",
