@@ -82,7 +82,8 @@ io.on('connection', function (socket) {
     socket.on('sendMsg', function (msgToSend) {
         console.log("Client wants to send: ", msgToSend);
         module.exports.msgToSend = msgToSend;
-        microUART.sendMsg();
+        var test = microUART.sendMsg();
+        console.log("Message sent", test);
     });
     //Request from client for accl data.
     socket.on('getAccl', function () {
