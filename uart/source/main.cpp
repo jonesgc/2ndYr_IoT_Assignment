@@ -14,6 +14,8 @@ MicroBitButton buttonA(MICROBIT_PIN_BUTTON_A, MICROBIT_ID_BUTTON_A);
 MicroBitButton buttonB(MICROBIT_PIN_BUTTON_B, MICROBIT_ID_BUTTON_B);
 
 
+ManagedString reMsg = "";
+
 int main()
 {
   uBit.init();
@@ -25,16 +27,34 @@ int main()
   uBit.messageBus.listen(MICROBIT_ID_BLE, MICROBIT_BLE_EVT_DISCONNECTED, dis);
 
   //Message string, must be terminated by | to send.
-  ManagedString msgString = 0;
+  ManagedString msgString = "";
   //65 default value for display character, this is the ascii value for A.
   char inChar = 65;
   char eom = '|';
+  //Default state is listening (1), sending messages is (2) which is triggered by pressing buttonA.
+  int state = 1;
   bool msg = false;
   bool lock = false;
   bool input = false;
+
   while(1)
   {
-    if(!msg)
+    //Listening for messages, this is the default state.
+    uBit.display.print("L");
+
+    //If there is an actual message display it on the microbit.
+    if(reMsg.length() > 0)
+    {
+      uBit.display.scroll(reMsg);
+    }
+
+    //Enter into sending mode.
+    while(buttonA.isPressed())
+    {
+      state = 2;
+    }
+    //Sending messages
+    if(!msg && state == 2)
     {
       while(msg == false)
       {
@@ -153,6 +173,8 @@ int main()
           //Clear out old string.
           msgString = "";
           encrypted = "";
+          //Reset the state back to listening.
+          state = 1;
           break;
         }
         else
@@ -174,6 +196,8 @@ int main()
 void conn(MicroBitEvent e)
 {
   uBit.display.print("C");
+  //Both sending and receaving messages are terminated with the eom char.
+  reMsg = uart->readUntil('|');
 }
 
 //Disconnected detected on BLE.
