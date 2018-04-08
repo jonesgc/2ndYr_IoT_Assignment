@@ -47,7 +47,7 @@ noble.on('stateChange', function (state)
         {
             console.log("Found a microbit!");
             peripheral.connect(function (error) {
-                
+
                 console.log("Connected to microbit!");
                 //List of services taken from BLE spec.
                 //Acclerometer service UUIDs.
@@ -59,7 +59,7 @@ noble.on('stateChange', function (state)
                 //Get services, UUIDs for microbit services taken from lancaster uni BLE spec.
                 peripheral.discoverServices([], function (error, services) {
                     console.log("Trying to get services");
-                    
+
                     //console.log(services);
                     //Iterate through list of services, this could be changed to for each.
                     for(var i=0, len = services.length; i < len; i++)
@@ -78,7 +78,7 @@ noble.on('stateChange', function (state)
                                     {
                                         var acclDataChar = chars;
                                         var timer = setInterval(function () {
-                                            
+
                                             //console.log("Got the data char");
                                             acclDataChar.read(function (error, data) {
                                                 //console.log("Raw data:", data);
@@ -105,10 +105,10 @@ noble.on('stateChange', function (state)
                                                 module.exports.xyz = xyz;
                                             })
                                         }
-                                            ,1000);
-                                        
+                                            ,100);
+
                                     }
-                                   
+
                                 })
                             });
                         }

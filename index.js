@@ -31,8 +31,6 @@ function getUart() {
             };
         };
 
-
-
         //Check argument for if the loop should stop.
         if (stop == 1) {
             console.log("Stopping");
@@ -49,7 +47,23 @@ function getAccl() {
     var time = setInterval(function () {
 
         var xyz = microAccl.xyz;
+        if(xyz === undefined){
+          //do nothing.
+        }
+        else {
+          var x = microAccl.xyz[0];
+          io.emit('xDat', x);
+          var y = microAccl.xyz[1];
+          io.emit('yDat', y);
+          var z = microAccl.xyz[2];
+          io.emit('zDat', z);
+          var pitch = Math.atan(x / Math.sqrt(Math.pow(y, 2) + Math.pow(y, 2)));
+          var roll = Math.atan(y / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+        };
+
+
         //console.log(xyz);
+        //Send array of data to client.
         io.emit('acclData', xyz);
 
         //Check argument for if the loop should stop.
@@ -57,7 +71,7 @@ function getAccl() {
             console.log("Stopping");
             clearInterval(time);
         };
-    },2000);
+    },100);
 };
 
 

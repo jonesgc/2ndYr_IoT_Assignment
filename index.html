@@ -7,6 +7,7 @@
         var socket = io();
         //Getting Msg from server.
         socket.on('uartMSg', function (msg) {
+            $('#acclDat').html('');
             $('#recBox').append(msg);
         });
         //Getting Accl data from server.
@@ -14,6 +15,19 @@
             $('#acclDat').html('');
             $('#acclDat').append(xyz);
             //console.log(xyz);
+        });
+        //Acclerometer data in parts.
+        socket.on('xDat', function(x){
+          $('#x').html('');
+          $('#x').append("X axis: " + x);
+        });
+        socket.on('yDat', function(y){
+          $('#y').html('');
+          $('#y').append("Y axis: " + y);
+        });
+        socket.on('zDat', function(z){
+          $('#z').html('');
+          $('#z').append("Z axis:" + z);
         });
         function getMsg(){
             console.log("Getting Msg");
@@ -41,8 +55,8 @@
 <body>
     <h1>IOT Challenge 3</h1>
     <div>
-        <input id="getMsgBtn" type="button" value="Get messages" onclick="getMsg()"/> 
-        <input id="stopMsgBtn" type="button" value="Stop messages" onclick="stopUart()" /> 
+        <input id="getMsgBtn" type="button" value="Get messages" onclick="getMsg()"/>
+        <input id="stopMsgBtn" type="button" value="Stop messages" onclick="stopUart()" />
         <div id="recBox">
             messages from Microbit go here.
         </div>
@@ -53,7 +67,12 @@
         <div id="accl">
             <input id="getAcclBtn" type="button" value="get Accl" onclick="getAccl()" />
             <div id="acclDat">
-
+            </div>
+            <div id="x">
+            </div>
+            <div id="y">
+            </div>
+            <div id="z">
             </div>
         </div>
     </div>
