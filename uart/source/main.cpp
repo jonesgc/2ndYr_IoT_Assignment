@@ -45,7 +45,10 @@ int main()
     //If there is an actual message display it on the microbit.
     if(reMsg.length() > 0)
     {
+      //Decrypt the message.
+      reMsg = protocol.decrypt(reMsg);
       uBit.display.scroll(reMsg);
+      reMsg = "";
     }
 
     //Enter into sending mode.
