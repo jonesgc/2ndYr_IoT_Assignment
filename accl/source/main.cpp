@@ -1,8 +1,6 @@
 #include "MicroBit.h"
-#include "MicroBitUARTService.h"
 
 MicroBit uBit;
-MicroBitUARTService *uart;
 
 //PROTOTYPES
 void conn(MicroBitEvent e);

@@ -135,9 +135,10 @@ int main()
     {
       int i = 0;
       //Append EOM character to string
+      msgString = msgString + '|';
       ManagedString encrypted = protocol.encrypt(msgString);
-      //msgString = msgString + '|';
-      encrypted = encrypted + '|';
+
+      //encrypted = encrypted + '|';
       int size = msgString.length();
       uart->send(size);
       //Encrypt the msg.
