@@ -8,50 +8,50 @@ var microAccl = require('./BLEaccl.js');
 var microUART = require('./BLEuart.js');
 var stop = 0;
 function getUart() {
-    
+
     var uart = microUART.getUart();
     var prev ="";
     //Constantly check for new messages.
     var time = setInterval(function () {
-   
+
         var msg = microUART.msg;
         var lock = 0;
-        
+
         //console.log(xyz);
         if (msg === undefined) {
             //do nothing
         }
         else if (msg.length > 0) {
             console.log("Msg is", msg);
-            
+
             if (prev != msg) {
                 //New message detected.
                 io.emit('uartMSg', msg);
                 prev = msg;
             };
         };
-        
-        
-        
+
+
+
         //Check argument for if the loop should stop.
         if (stop == 1) {
             console.log("Stopping");
                 clearInterval(time);
             };
-            
-        
+
+
     }, 2000);
 };
-    
+
 function getAccl() {
     var accl = microAccl.getAccl();
     console.log("Getting Accl data");
     var time = setInterval(function () {
-        
+
         var xyz = microAccl.xyz;
         //console.log(xyz);
         io.emit('acclData', xyz);
-        
+
         //Check argument for if the loop should stop.
         if (stop == 1) {
             console.log("Stopping");
@@ -82,8 +82,7 @@ io.on('connection', function (socket) {
     socket.on('sendMsg', function (msgToSend) {
         console.log("Client wants to send: ", msgToSend);
         module.exports.msgToSend = msgToSend;
-        var test = microUART.sendMsg();
-        console.log("Message sent", test);
+        microUART.sendMsg();
     });
     //Request from client for accl data.
     socket.on('getAccl', function () {

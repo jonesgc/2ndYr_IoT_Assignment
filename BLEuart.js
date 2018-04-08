@@ -30,17 +30,7 @@ function getUart() {
                     ' RSSI ' + peripheral.rssi + ':');
         console.log('\thello my local name is:');
         console.log('\t\t' + peripheral.advertisement.localName);
-        console.log('\tcan I interest you in any of the following advertised services:');
-        console.log('\t\t' + JSON.stringify(peripheral.advertisement.serviceUuids));
 
-        //Display device service.
-        var serviceData = peripheral.advertisement.serviceData;
-        if (serviceData && serviceData.length) {
-            console.log('\there is my service data:');
-            for (var i in serviceData) {
-                console.log('\t\t' + JSON.stringify(serviceData[i].uuid) + ': ' + JSON.stringify(serviceData[i].data.toString('hex')));
-            }
-        }
 
         //Find and attempt to connect to the bbc microbit.
         if (peripheral.advertisement.localName == "BBC micro:bit [gipev]") {
@@ -83,7 +73,6 @@ function getUart() {
 
                                         //Event listener for indications from serivce.
                                         uartTXChar.on('data', function (data, isNotification) {
-
                                             var dataChar = data.toString('ascii');
                                             //Decrypt.
                                             function decrypt(char) {
@@ -107,6 +96,7 @@ function getUart() {
                                             }
                                             else if(dataChar == 0)
                                             {
+                                              //Uart first packet will contain a 0, ignore this.
                                             }
                                             //console.log(data.toString('ascii'));
                                             else if (dataChar == '|') {
@@ -161,9 +151,9 @@ function getUart() {
 
 //Send msg to microbit.
 function sendMsg() {
+  var eom = 0;
 
     console.log("Start of sender");
-
         //State of local bluetooth device changed.
         noble.on('stateChange', function (state) {
             if (state === 'poweredOn') {
@@ -172,6 +162,7 @@ function sendMsg() {
             }
             else {
                 noble.stopScanning();
+                console.log("Stop scanning");
             }
         });
 
@@ -201,7 +192,8 @@ function sendMsg() {
 
                         //console.log(services);
                         //Iterate through list of services, this could be changed to for each.
-                        for (var i = 0, len = services.length; i < len; i++) {
+                        for (let i = 0, len = services.length; i < len; i++) {
+                            console.log("Searching Services.");
                             //console.log(services[i].uuid);
                             if (services[i].uuid == uartUUID) {
                                 console.log("Found uart service");
@@ -209,8 +201,14 @@ function sendMsg() {
                                 var rawMsg = "";
                                 //Get characteristics for this service.
                                 uartServ.discoverCharacteristics([], function (error, chars) {
-
+                                  console.log("Discovering chars");
                                     chars.forEach(function (chars) {
+                                      console.log("For each through chars.");
+                                      if(eom == 1)
+                                      {
+                                        console.log("Trying to exit.");
+                                        return true;
+                                      };
                                         //console.log('Char uuid:', chars.uuid);
                                         if (chars.uuid == uartRXUUID) {
                                             console.log("got the rx char");
@@ -231,11 +229,11 @@ function sendMsg() {
                                             //Loop through the msgToSend, breaking it into characters
                                             //this is because of the limit (20 bytes) on uart sending.
                                             console.log("Trying to write", msgToSend);
-                                            for (var i = 0; i < msgToSend.length; i++) {
-                                                console.log("Sending: ", msgToSend.charAt(i));
+                                            for (var x = 0; x < msgToSend.length; x++) {
+                                                console.log("Sending: ", msgToSend.charAt(x));
                                                 //Encrypt the character before sending.
 
-                                                var enChar = encrypt(msgToSend.charAt(i));
+                                                var enChar = encrypt(msgToSend.charAt(x));
 
                                                 console.log("Encrypted char is:", enChar);
                                                 var bufToSend = Buffer.from(enChar, 'ascii');
@@ -245,24 +243,28 @@ function sendMsg() {
                                                 if (enChar == '|') {
                                                     //Finished sending.
                                                     console.log("End of message.");
-
+                                                    eom = 1;
                                                 };
 
                                             };
+                                            console.log("end of chars loop");
                                         }
-
+                                        console.log("end of chars");
                                     })
+                                    console.log("end of discover chars ");
 
                                 });
-
+                                console.log("end of servs if");
                             }
-
+                            console.log("end of servs loop");
                         }
+                        console.log("end of discover ");
                     });
+                    console.log("end of conn ");
                 });
-
+                console.log("end of conn match if");
             }
-
+            console.log("end of discover");
         });
 
 };
