@@ -57,8 +57,14 @@ function getAccl() {
           io.emit('yDat', y);
           var z = microAccl.xyz[2];
           io.emit('zDat', z);
+          //Adapted from https://lancaster-university.github.io/microbit-docs/ble/accelerometer-service/
           var pitch = Math.atan(x / Math.sqrt(Math.pow(y, 2) + Math.pow(y, 2)));
           var roll = Math.atan(y / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+          //Convert from radians to degrees.
+          pitch = pitch * (180.0 / Math.PI);
+          roll = -1 * roll * (180.0 / Math.PI);
+          io.emit('pitch', pitch);
+          io.emit('roll', roll);
         };
 
 

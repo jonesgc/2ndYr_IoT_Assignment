@@ -29,6 +29,38 @@
           $('#z').html('');
           $('#z').append("Z axis:" + z);
         });
+        socket.on('pitch', function (pitch){
+          $('#pitch').html('');
+          $('#pitch').append("pitch:" + pitch);
+        });
+        socket.on('roll', function (roll){
+          $('#roll').html('');
+          $('#roll').append("roll:" + roll);
+        });
+        window.requestAnimationFrame(animate);
+        //Canvas animation.
+        //"microbit"
+
+        function animate(){
+          var ctx = document.getElementById('display').getContext('2d');
+          var microbit = {
+            x: 100,
+            y: 100,
+            color: 'red',
+            draw: function(){
+              ctx.fillStyle = this.color;
+              ctx.fill();
+              ctx.fillRect(90,90,100,75);
+            }
+          };
+          function draw(){
+            microbit.
+          };
+          microbit.draw();
+          //Clear the canvas.
+          //ctx.clearRect(0,0,1000,750);
+          window.requestAnimationFrame(animate);
+        };
         function getMsg(){
             console.log("Getting Msg");
             //Emit an event with the type getUart.
@@ -73,6 +105,10 @@
             <div id="y">
             </div>
             <div id="z">
+            </div>
+            <div id="pitch">
+            </div>
+            <div id="roll">
             </div>
         </div>
     </div>
