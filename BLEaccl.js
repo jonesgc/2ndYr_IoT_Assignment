@@ -83,19 +83,15 @@ noble.on('stateChange', function (state)
                                             acclDataChar.read(function (error, data) {
                                                 //console.log("Raw data:", data);
                                                 //Raw data from accelerometer.
-                                                var rawData = Array.prototype.slice.call(data, 0);
-                                                var rawX = new Int16Array();
-                                                rawX = rawData.slice(0, 1);
-                                                var rawY = new Int16Array();
-                                                rawY = rawData.slice(2, 3);
-                                                var rawZ = new Int16Array();
-                                                rawZ = rawData.slice(4, 5);
+                                                var rawX = data.readInt16LE(0);
+                                                var rawY = data.readInt16LE(2);
+                                                var rawZ = data.readInt16LE(4);
                                                 //console.log("Raw X val",rawX);
                                                 //console.log("Raw y val",rawY);
                                                 //console.log("Raw Z val", rawZ);
-                                                var datX = rawX / 1000;
-                                                var datY = rawY / 1000;
-                                                var datZ = rawZ / 1000;
+                                                var datX = rawX; // 1000;
+                                                var datY = rawY; // 1000;
+                                                var datZ = rawZ; // 1000;
                                                // console.log("X axis:", datX);
                                                 //console.log("Y axis:", datY);
                                                 //console.log("Z axis:", datZ);

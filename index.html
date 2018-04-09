@@ -19,11 +19,11 @@
         //Acclerometer data in parts.
         socket.on('xDat', function(x){
           $('#x').html('');
-          $('#x').append("X axis: " + x);
+          $('#x').append(x);
         });
         socket.on('yDat', function(y){
           $('#y').html('');
-          $('#y').append("Y axis: " + y);
+          $('#y').append(y);
         });
         socket.on('zDat', function(z){
           $('#z').html('');
@@ -37,30 +37,55 @@
           $('#roll').html('');
           $('#roll').append("roll:" + roll);
         });
-        window.requestAnimationFrame(animate);
+
         //Canvas animation.
         //"microbit"
+        var mx = 100;
+        var my = 100;
 
         function animate(){
           var ctx = document.getElementById('display').getContext('2d');
+          //Accleration variables.
+          var ax =  $('#x').text();
+          var ay = $('#y').text();
+
+
           var microbit = {
-            x: 100,
-            y: 100,
+            //Position co-ords
+            x: mx,
+            y: my,
+            //Velocity vectors.
+            vx: 0,
+            vy: 0,
             color: 'red',
             draw: function(){
+              ctx.clearRect(0,0, 1000, 750);
               ctx.fillStyle = this.color;
               ctx.fill();
-              ctx.fillRect(90,90,100,75);
+              ctx.fillRect(this.x,this.y,100,75);
             }
           };
-          function draw(){
-            microbit.
+          if(ax > 0){
+            console.log(microbit.vx);
+            microbit.vx++ ;
+          }
+          else if(ax < 0){
+            microbit.vx-- ;
+          };
+          //Update position.
+          microbit.x += microbit.vx;
+          //console.log(microbit.x);
+          //Boundry detection. Adapted from https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Advanced_animations
+          if (microbit.y + microbit.vy > 1000 || microbit.y + microbit.vy < 0) {
+            microbit.vy = -microbit.vy;
+          };
+          if (microbit.x + microbit.vx > 750 || microbit.x + microbit.vx < 0) {
+            microbit.vx = -microbit.vx;
           };
           microbit.draw();
-          //Clear the canvas.
-          //ctx.clearRect(0,0,1000,750);
           window.requestAnimationFrame(animate);
         };
+        window.requestAnimationFrame(animate);
         function getMsg(){
             console.log("Getting Msg");
             //Emit an event with the type getUart.
